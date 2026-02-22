@@ -49,6 +49,14 @@
 *   **User Interface:** Dynamic filtering of dropdown inputs relying on valid combinations extracted during preprocessing.
 *   **Delivery:** Providing immediate insights via the final predicted price, model accuracy proofs, and the localized SHAP waterfall chart.
 
-## 8. Conclusion & Future Improvements
-*   **Conclusion:** The pipeline successfully handles raw scraped unstructured data to produce meaningful, explainable real-world pricing intelligence.
-*   **Improvements:** Integrating NLP for the `description` text, expanding the dataset globally, and hosting the application on cloud infrastructure.
+## 8. Critical Discussion & Conclusion
+*   **Limitations (Guideline #5):** 
+    *   **Feature Scope:** The model lacks physical inspection data (e.g., screen scratches, battery health percentage) which significantly affects price.
+    *   **Static Data:** Prices are a snapshot; LKR inflation or new phone releases (e.g., iPhone 16) will make the current model obsolete.
+*   **Data Quality & Bias:**
+    *   **Source Bias:** Data from `ikman.lk` represents people who use online classifieds, potentially missing the offline market or high-end dealer prices.
+    *   **Cleaning:** Removing "Unknown" models improved UX but slightly reduced the volume of niche records.
+*   **Ethical Considerations & Real-World Impact:**
+    *   **Impact:** Empowers non-technical users to avoid overpaying or being scammed.
+    *   **Ethical Use:** No private seller information (names, phone numbers) was collected or stored.
+*   **Conclusion:** The pipeline successfully handles raw scraped unstructured data to produce meaningful, explainable real-world pricing intelligence with a functional front-end.

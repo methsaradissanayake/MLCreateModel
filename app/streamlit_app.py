@@ -15,8 +15,8 @@ def get_base64_of_bin_file(bin_file):
         data = f.read()
     return base64.b64encode(data).decode()
 
-# Use the generated background image
-bg_img_path = r"C:\Users\DELL LATITUDE 5420\.gemini\antigravity\brain\d26df8ac-bc55-47a7-bccf-8677872fb10b\dark_tech_background_1771778149355.png"
+# Use the background image from the project assets
+bg_img_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'background.png')
 BACKGROUND_IMAGE_URL = ""
 if os.path.exists(bg_img_path):
     bg_encoded = get_base64_of_bin_file(bg_img_path)

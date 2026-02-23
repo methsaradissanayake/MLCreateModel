@@ -3,8 +3,12 @@ pandas
 scikit-learn
 matplotlib
 seaborn
-jupyter
-ipykernel
 python-dotenv
 requests
 beautifulsoup4
+xgboost
+shap
+streamlit
+joblib
+tqdm
+plotly

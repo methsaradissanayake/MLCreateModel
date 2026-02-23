@@ -1,0 +1,29 @@
+# Exclude OS files
+.DS_Store
+Thumbs.db
+
+# Exclude Python files
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.env
+
+# Exclude raw data (keep reference.csv and metrics if needed)
+# Keeping data/processed/reference.csv and models/ for the app to function
+# If you want to keep the whole data folder, comment out below
+# data/mobiles.csv
+
+# Exclude logs and results
+outputs/plots/
+outputs/metrics_table.csv
+
+# Exclude IDE and Git
+.idea/
+.vscode/
+.git/
+.gitignore
+.gemini/
+brain/

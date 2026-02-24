@@ -7,7 +7,7 @@ import os
 import shap
 import matplotlib.pyplot as plt
 
-# Set up logging
+# Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_data(data_dir):
@@ -43,16 +43,12 @@ def main(data_dir):
     # Explain the model predictions using SHAP
     explainer = shap.TreeExplainer(model)
     
-    # Calculate SHAP values for a sample of the training data (to save time/memory)
-    # 500 samples is usually sufficient for global explanations
+    # Calculate SHAP values
     sample_size = min(500, len(X_train))
     X_sample = shap.utils.sample(X_train, sample_size)
     shap_values = explainer(X_sample)
 
-    # 1. Feature Importance Bar Chart
-    # What feature importance means: 
-    # This bar chart shows the average impact each feature has on the model's predictions overall. 
-    # Features at the top are the most important drivers of the phone's price across all phones in the dataset.
+    # Feature Importance Bar Chart
     logging.info("Generating SHAP Feature Importance Bar Chart...")
     plt.figure()
     shap.summary_plot(shap_values, X_sample, plot_type="bar", show=False)
@@ -61,12 +57,7 @@ def main(data_dir):
     plt.savefig(os.path.join(plots_dir, 'shap_importance_bar.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-    # 2. SHAP Summary Plot
-    # What SHAP summary plot means:
-    # This plot combines feature importance with feature effects. 
-    # Each dot represents a mobile phone. 
-    # The color represents the actual value of the feature (e.g., Red = High RAM, Blue = Low RAM). 
-    # The x-axis position shows the impact on the prediction (right = increases price, left = decreases price).
+    # SHAP Summary Plot
     logging.info("Generating SHAP Summary Plot...")
     plt.figure()
     shap.summary_plot(shap_values, X_sample, show=False)
@@ -75,16 +66,11 @@ def main(data_dir):
     plt.savefig(os.path.join(plots_dir, 'shap_summary.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-    # 3. SHAP Dependence Plot
-    # Identify the most important feature to plot its dependence
+    # SHAP Dependence Plot
     mean_abs_shap = np.abs(shap_values.values).mean(axis=0)
     top_feature_idx = np.argsort(mean_abs_shap)[-1]
     top_feature_name = X_train.columns[top_feature_idx]
-    
-    # What SHAP dependence plot means:
-    # This plot shows how a single feature (e.g., Storage_GB) affects the predicted price. 
-    # The x-axis is the feature's value, and the y-axis is the SHAP value (impact on price). 
-    # It helps visualize non-linear relationships and interactions with other features.
+
     logging.info(f"Generating SHAP Dependence Plot for top feature: {top_feature_name}...")
     plt.figure()
     # We use shap.dependence_plot instead of plots.scatter for better older-version compatibility

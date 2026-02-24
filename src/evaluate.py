@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import root_mean_squared_error, mean_absolute_error, r2_score
 
-# Set up logging
+# Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_data(data_dir):
@@ -29,7 +29,7 @@ def generate_plots(y_true, y_pred, output_dir):
 
     sns.set_theme(style="whitegrid")
 
-    # 1. Predicted vs Actual Plot
+    # Predicted vs Actual
     logging.info("Generating Predicted vs Actual plot...")
     plt.figure(figsize=(10, 6))
     plt.scatter(y_true, y_pred, alpha=0.5, color='royalblue')
@@ -47,7 +47,7 @@ def generate_plots(y_true, y_pred, output_dir):
     plt.savefig(os.path.join(plots_dir, 'predicted_vs_actual.png'), dpi=300)
     plt.close()
 
-    # 2. Residual Histogram
+    # Residual Histogram
     logging.info("Generating Residuals Histogram...")
     residuals = y_true - y_pred
     plt.figure(figsize=(10, 6))

@@ -7,7 +7,7 @@ import os
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 
-# Set up logging
+# Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_data(data_dir):
@@ -40,16 +40,14 @@ def main(data_dir):
     logging.info(f"Training data shape: {X_train.shape}")
     logging.info(f"Validation data shape: {X_val.shape}")
 
-    # 1. Initialize XGBoost Regressor
+    # Initialize XGBoost Regressor
     xgb_model = xgb.XGBRegressor(
         objective='reg:squarederror',
         random_state=42,
         n_jobs=-1
     )
 
-    # 2. Hyperparameter Grid for RandomizedSearchCV
-    # Justification: RandomizedSearchCV is faster than GridSearchCV for finding near-optimal 
-    # hyperparams across a large search space, which saves time while maintaining good performance.
+    # Hyperparameter Grid
     param_dist = {
         'n_estimators': [100, 300, 500, 1000],
         'learning_rate': [0.01, 0.05, 0.1, 0.2],
@@ -77,14 +75,14 @@ def main(data_dir):
     best_params = search.best_params_
     logging.info(f"Best hyperparameters found: {best_params}")
 
-    # 3. Train final model with early stopping on validation set
+    # Final model with early stopping
     logging.info("Training final model with early stopping...")
     final_model = xgb.XGBRegressor(
         **best_params,
         objective='reg:squarederror',
         random_state=42,
         n_jobs=-1,
-        early_stopping_rounds=50 # Stop if validation error doesn't improve for 50 rounds
+        early_stopping_rounds=50
     )
 
     # Fit with evaluation set
@@ -95,7 +93,7 @@ def main(data_dir):
         verbose=50
     )
 
-    # 4. Save the trained model
+    # Save model
     os.makedirs('models', exist_ok=True)
     model_path = 'models/xgb_model.joblib'
     joblib.dump(final_model, model_path)

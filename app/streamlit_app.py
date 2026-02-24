@@ -319,6 +319,8 @@ with center_col:
         we break down the internal logic of the XGBoost model to show you exactly how each feature influenced your specific price.
         """)
         
+        st.caption("📊 **Model Report Card**: These metrics show the overall accuracy of the AI model based on 5,500+ historical records. They stay constant to show you the reliability of the system.")
+        
         # Performance Metrics
         perf_col1, perf_col2, perf_col3 = st.columns(3)
         with perf_col1:

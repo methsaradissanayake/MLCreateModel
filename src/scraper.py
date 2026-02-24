@@ -15,7 +15,7 @@ LOCATIONS = [
     "ratnapura", "badulla", "matale", "nuwara-eliya", "ampara",
     "batticaloa", "jaffna", "hambantota", "polonnaruwa", "moneragala",
     "trincomalee", "vavuniya", "kilinochchi", "mullaitivu", "mannar",
-    "sri-lanka" # Catch-all
+    "sri-lanka"
 ]
 
 QUERIES = [
@@ -83,7 +83,7 @@ def save_to_csv(data, filename, is_first_batch):
         writer.writerows(data)
 
 def main():
-    print(f"Starting grid-search JSON scraper. Target: {TARGET_RECORDS} records.")
+    print(f"Starting scraper. Target: {TARGET_RECORDS} records.")
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     
     total_scraped = 0
@@ -91,7 +91,7 @@ def main():
     session = requests.Session()
     session.headers.update(headers)
     
-    # Shuffle to distribute load
+    # Shuffle
     random.shuffle(LOCATIONS)
     random.shuffle(QUERIES)
 
@@ -115,13 +115,11 @@ def main():
                     if response.status_code != 200:
                         break # Go to next query on failure (like 404 or 500)
                         
-                    json_data = extract_json_data(response.text)
                     if not json_data:
-                        break # Probably blocked or structure changed
+                        break
                         
-                    ads = parse_ads(json_data)
                     if not ads:
-                        break # End of results for this combo
+                        break
                     
                     unique_ads = []
                     for ad in ads:
@@ -131,7 +129,6 @@ def main():
                             unique_ads.append(ad)
                     
                     if not unique_ads:
-                        # All duplicates, might just be top ads repeating
                         continue
                         
                     if total_scraped + len(unique_ads) > TARGET_RECORDS:

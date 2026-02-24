@@ -8,7 +8,7 @@ import re
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-# Set up logging
+# Logging setup
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def clean_price(price_str):
@@ -64,7 +64,7 @@ def extract_features_from_title(title):
         # Remove matched storage from title to help brand/model extraction
         title = title.replace(storage_match.group(0), '')
 
-    # Simple heuristic for brand (first word) and model (rest)
+    # Extract brand and model
     parts = title.strip().split()
     brand = parts[0] if len(parts) > 0 else "Unknown"
     model = " ".join(parts[1:]).strip() if len(parts) > 1 else "Unknown"
@@ -84,10 +84,9 @@ def main(input_path, output_path):
         logging.error(f"Input file not found: {input_path}")
         return
 
-    # 1. Target column detection
+    # Target column detection
     target_col = 'price'
     if target_col not in df.columns:
-        # Attempt to auto-detect
         possible_targets = [c for c in df.columns if 'price' in c.lower()]
         if possible_targets:
             target_col = possible_targets[0]
@@ -96,6 +95,7 @@ def main(input_path, output_path):
             logging.error("Could not detect a target price column. Exiting.")
             return
 
+    # Clean price column
     logging.info("Cleaning price column...")
     df['Price_Cleaned'] = df[target_col].apply(clean_price)
     
@@ -111,13 +111,11 @@ def main(input_path, output_path):
     extracted = df['title'].apply(extract_features_from_title)
     df = pd.concat([df, extracted], axis=1)
 
-    # 2. Handle missing values
-    logging.info("Handling missing values...")
     # Fill storage with median storage by Brand if available, else overall median
     df['Storage_GB'] = df.groupby('Brand')['Storage_GB'].transform(lambda x: x.fillna(x.median()) if not x.isna().all() else x)
     df['Storage_GB'].fillna(df['Storage_GB'].median(), inplace=True)
 
-    # 3. Categorical Encoding
+    # Categorical Encoding
     logging.info("Encoding categorical features...")
     cat_columns = ['Brand', 'Model', 'Condition', 'location', 'membershipLevel']
     encoders = {}
@@ -151,18 +149,15 @@ def main(input_path, output_path):
 
     logging.info(f"Final feature set: {features}")
 
-    # 4. Train/Validation/Test Split (70-15-15)
-    logging.info("Splitting dataset into Train (70%), Val (15%), Test (15%)...")
+    # Train/Validation/Test Split (70-15-15)
     X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
-    # Remaining 85% is temp. We need 15% of total for Val -> 15/85 of temp
     val_ratio = 0.15 / 0.85
     X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=val_ratio, random_state=42)
 
-    # Save processed datasets
-    output_dir = os.path.dirname(output_path)
+    # Save data splits
+    output_dir = output_path
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
-    
     # Save the splits to separate CSVs for clear downstream usage
     train_df = pd.concat([X_train, y_train], axis=1)
     train_df.to_csv(os.path.join(output_dir, 'train.csv'), index=False)
